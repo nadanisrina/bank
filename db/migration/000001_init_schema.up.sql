@@ -3,41 +3,41 @@ CREATE TYPE "TypeBalance" AS ENUM (
   'kredit'
 );
 
-CREATE TABLE "user" (
+CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
   "username" varchar NOT NULL,
   "email" varchar NOT NULL,
-  "passwordHash" varchar NOT NULL,
-  "createdAt" timestamptz NOT NULL DEFAULT (now())
+  "password_hash" varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "user_balance" (
   "id" bigserial PRIMARY KEY,
-  "userId" int,
+  "user_id" int,
   "balance" bigint NOT NULL,
-  "balanceAchieve" bigint,
-  "createdAt" timestamptz NOT NULL DEFAULT (now())
+  "balance_achieve" bigint,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "user_balance_history" (
   "id" bigserial PRIMARY KEY,
-  "userBalanceId" bigint NOT NULL,
-  "balanceBefore" int NOT NULL,
-  "balanceAfter" int DEFAULT 0,
+  "user_balanceId" bigint NOT NULL,
+  "balance_before" int NOT NULL,
+  "balance_after" int DEFAULT 0,
   "activity" int,
   "type" "TypeBalance" NOT NULL,
   "ip" varchar,
   "location" int,
-  "userAgent" varchar,
+  "user_agent" varchar,
   "author" varchar,
-  "createdAt" timestamptz NOT NULL DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE INDEX ON "user" ("username");
+CREATE INDEX ON "users" ("username");
 
 COMMENT ON COLUMN "user_balance"."balance" IS 'can be negative or positive';
 
-ALTER TABLE "user_balance" ADD FOREIGN KEY ("userId") REFERENCES "user" ("id");
+ALTER TABLE "user_balance" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "user_balance_history" ADD FOREIGN KEY ("userBalanceId") REFERENCES "user_balance" ("id");
+ALTER TABLE "user_balance_history" ADD FOREIGN KEY ("user_balanceId") REFERENCES "user_balance" ("id");
 
