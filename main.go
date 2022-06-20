@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bank/handler"
 	"bank/user"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,12 +20,15 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	userHandler := handler.NewUserHandler(userService)
 
-	userInput := user.RegisterUserInput{}
-	userInput.Username = "cobah1"
-	userInput.Email = "cobah0261@gmail.com"
-	userInput.Password = "cobah1"
+	router := gin.Default()
 
-	userService.RegisterUser(userInput)
+	v1 := router.Group("/api/v1")
+	{
+		v1.POST("/user", userHandler.RegisterUser)
+	}
+
+	router.Run(":8080")
 
 }
