@@ -25,6 +25,7 @@ func (s *service) RegisterUserInput(input RegisterUserInput) (User, error) {
 	}
 	user.PasswordHash = string(passwordHash)
 	newUser, err := s.repository.Save(user)
+
 	if err != nil {
 		return newUser, err
 	}

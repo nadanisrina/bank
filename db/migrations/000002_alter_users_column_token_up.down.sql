@@ -1,0 +1,1 @@
+ALTER TABLE "users" DROP IF NOT EXISTS "token" VARCHAR;

@@ -9,12 +9,21 @@ dropdb:
 	docker exec -it image-postgres dropdb --username=postgres bank
 
 migrateup: 
-	migrate -path db/migration -database "${DB_URL}" -verbose up
+	migrate -path db/migrations -database "${DB_URL}" -verbose up
+
+migrateversion: 
+	migrate -source=file://db/migrations -database "${DB_URL}" up 2
 
 migratedown: 
-	migrate -path db/migration -database "${DB_URL}" -verbose down
+	migrate -path db/migrations -database "${DB_URL}" -verbose down
+
+newmigrate: 
+	migrate create -ext sql -dir db/migrations -seq alter_users_column_token_up
 
 test: 
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown test
+run: 
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown migrateversion test
