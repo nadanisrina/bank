@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bank/helper"
 	"bank/user"
 	"net/http"
 
@@ -25,7 +26,9 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	user, err := h.userService.RegisterUserInput(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
-
 	}
-	c.JSON(http.StatusOK, user)
+
+	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", user)
+	c.JSON(http.StatusOK, response)
+
 }

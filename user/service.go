@@ -14,7 +14,8 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
+//s berisi repository, dan Interface bisa panggil service
+func (s *service) RegisterUserInput(input RegisterUserInput) (User, error) {
 	user := User{}
 	user.Username = input.Username
 	user.Email = input.Email
