@@ -25,9 +25,58 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login User",
+                "parameters": [
+                    {
+                        "description": " example",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/user.LoginInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
-                "description": "create user",
                 "consumes": [
                     "application/json"
                 ],
@@ -40,18 +89,19 @@ const docTemplate = `{
                 "summary": "Create User",
                 "parameters": [
                     {
-                        "type": "object",
-                        "description": "user.RegisterUserInput",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": " example",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/user.RegisterUserInput"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     },
                     "400": {
@@ -87,6 +137,64 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "status bad request"
+                }
+            }
+        },
+        "helper.Meta": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/helper.Meta"
+                }
+            }
+        },
+        "user.LoginInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RegisterUserInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "description": "in: query",
+                    "type": "string"
                 }
             }
         },

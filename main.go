@@ -34,7 +34,7 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "Sample of Bank Server"
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "bank.swagger.io"
+	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
@@ -53,7 +53,9 @@ func main() {
 
 	v1 := router.Group("/api/v1")
 	{
+		// swagger:route POST /user CreateUser
 		v1.POST("/user", userHandler.RegisterUser)
+		v1.POST("/login", userHandler.Login)
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run(":8080")

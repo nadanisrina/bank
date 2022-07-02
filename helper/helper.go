@@ -1,5 +1,7 @@
 package helper
 
+// Returns formatted response.
+// swagger:response Response
 type Response struct {
 	Meta Meta        `json:"meta"`
 	Data interface{} `json:"data"`

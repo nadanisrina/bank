@@ -9,6 +9,45 @@ definitions:
         example: status bad request
         type: string
     type: object
+  helper.Meta:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helper.Response:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/helper.Meta'
+    type: object
+  user.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.RegisterUserInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        description: 'in: query'
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
   user.User:
     properties:
       createdAt:
@@ -38,17 +77,16 @@ info:
   title: Bank API
   version: "1.0"
 paths:
-  /users:
+  /login:
     post:
       consumes:
       - application/json
-      description: create user
       parameters:
-      - description: user.RegisterUserInput
-        in: path
-        name: id
-        required: true
-        type: object
+      - description: ' example'
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/user.LoginInput'
       produces:
       - application/json
       responses:
@@ -56,6 +94,38 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/user.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+      summary: Login User
+      tags:
+      - users
+  /users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ' example'
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/user.RegisterUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.Response'
         "400":
           description: Bad Request
           schema:
