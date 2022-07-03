@@ -21,7 +21,7 @@ func NewUserHandler(userService user.Service) *userHandler {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        body     body     user.RegisterUserInput     false  " example"   user.RegisterUserInput
+// @Param        body     body     user.RegisterUserInput     false  "example body"   user.RegisterUserInput
 // @Success      200  {object}  helper.Response
 // @Failure      400  {object}  helper.HTTPError
 // @Failure      404  {object}  helper.HTTPError
@@ -60,7 +60,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        body     body     user.LoginInput     false  " example"   user.LoginInput
+// @Param        body     body     user.LoginInput     false  "example body"   user.LoginInput
 // @Success      200  {object}  user.User
 // @Failure      400  {object}  helper.HTTPError
 // @Failure      404  {object}  helper.HTTPError
@@ -79,6 +79,50 @@ func (h *userHandler) Login(c *gin.Context) {
 	loginUser, err := h.userService.Login(input)
 	formatted := user.FormatUser(loginUser, "token")
 	response := helper.APIResponse("Login Success", http.StatusOK, "success", formatted)
+	c.JSON(http.StatusOK, response)
+
+}
+
+// CheckEmail godoc
+// @Summary      Check Email Availibility
+// @Tags         email
+// @Accept       json
+// @Produce      json
+// @Param        body     body     user.CheckEmailInput     false  "example body"   user.CheckEmailInput
+// @Success      200  {object}  user.User
+// @Failure      400  {object}  helper.HTTPError
+// @Failure      404  {object}  helper.HTTPError
+// @Failure      500  {object}  helper.HTTPError
+// @Router       /email_checkers [post]
+func (h *userHandler) CheckEmail(c *gin.Context) {
+	var input user.CheckEmailInput
+	//binding input to json
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		response := helper.APIResponse("Check Email Failed", http.StatusUnprocessableEntity, "error", err.Error())
+		c.JSON(http.StatusUnprocessableEntity, response)
+		helper.NewError(c, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	isEmailAvailable, err := h.userService.CheckEmail(input)
+	if err != nil {
+		response := helper.APIResponse("Email not available", http.StatusInternalServerError, "error", err.Error())
+		c.JSON(http.StatusUnavailableForLegalReasons, response)
+		helper.NewError(c, http.StatusUnprocessableEntity, err)
+		return
+	}
+	// data := gin.H{
+	// 	"is_available": isEmailAvailable
+	// }
+	var message string
+	if isEmailAvailable {
+		message = "Email is Available"
+	} else {
+		message = "Email has been registered"
+	}
+	formatter := user.FormatCheckEmail(isEmailAvailable)
+	response := helper.APIResponse(message, http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 
 }

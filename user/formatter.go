@@ -10,6 +10,10 @@ type UserFormatter struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type CheckEmailFormatter struct {
+	IsAvailable bool `json:"is_available"`
+}
+
 func FormatUser(user User, token string) UserFormatter {
 	formatter := UserFormatter{
 		ID:        user.ID,
@@ -18,5 +22,13 @@ func FormatUser(user User, token string) UserFormatter {
 		Token:     token,
 		CreatedAt: user.CreatedAt,
 	}
+	return formatter
+}
+
+func FormatCheckEmail(isEmailAvailable bool) CheckEmailFormatter {
+	formatter := CheckEmailFormatter{
+		IsAvailable: isEmailAvailable,
+	}
+
 	return formatter
 }

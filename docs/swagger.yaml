@@ -24,6 +24,13 @@ definitions:
       meta:
         $ref: '#/definitions/helper.Meta'
     type: object
+  user.CheckEmailInput:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   user.LoginInput:
     properties:
       email:
@@ -41,7 +48,6 @@ definitions:
       password:
         type: string
       username:
-        description: 'in: query'
         type: string
     required:
     - email
@@ -77,12 +83,44 @@ info:
   title: Bank API
   version: "1.0"
 paths:
+  /email_checkers:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: example body
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/user.CheckEmailInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+      summary: Check Email Availibility
+      tags:
+      - email
   /login:
     post:
       consumes:
       - application/json
       parameters:
-      - description: ' example'
+      - description: example body
         in: body
         name: body
         schema:
@@ -114,7 +152,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: ' example'
+      - description: example body
         in: body
         name: body
         schema:

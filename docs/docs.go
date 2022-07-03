@@ -25,6 +25,56 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/email_checkers": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "email"
+                ],
+                "summary": "Check Email Availibility",
+                "parameters": [
+                    {
+                        "description": "example body",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/user.CheckEmailInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -39,7 +89,7 @@ const docTemplate = `{
                 "summary": "Login User",
                 "parameters": [
                     {
-                        "description": " example",
+                        "description": "example body",
                         "name": "body",
                         "in": "body",
                         "schema": {
@@ -89,7 +139,7 @@ const docTemplate = `{
                 "summary": "Create User",
                 "parameters": [
                     {
-                        "description": " example",
+                        "description": "example body",
                         "name": "body",
                         "in": "body",
                         "schema": {
@@ -163,6 +213,17 @@ const docTemplate = `{
                 }
             }
         },
+        "user.CheckEmailInput": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "user.LoginInput": {
             "type": "object",
             "required": [
@@ -193,7 +254,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "description": "in: query",
                     "type": "string"
                 }
             }
