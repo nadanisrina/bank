@@ -3,6 +3,7 @@ package handler
 import (
 	"bank/helper"
 	"bank/user"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -146,7 +147,9 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 	}
 	//make path of file
-	path := "images/" + file.Filename
+	userID := 1
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+	// path := "images/" + file.Filename
 	//save file ke local
 	err = c.SaveUploadedFile(file, path)
 
@@ -156,8 +159,6 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
-	userID := 1
 
 	_, err = h.userService.UploadAvatar(userID, path)
 
@@ -169,7 +170,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	formatter := user.FormatUploadAvatar(true)
-	response := helper.APIResponse("Successfully upload avatar", http.StatusOK, "error", formatter)
+	response := helper.APIResponse("Successfully upload avatar", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 
 }
