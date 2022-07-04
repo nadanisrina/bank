@@ -126,3 +126,50 @@ func (h *userHandler) CheckEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 
 }
+
+// UploadAvatar godoc
+// @Summary      Upload Avatar of user
+// @Tags         email
+// @Accept       json
+// @Produce      json
+// @Param        formData     formData     user.UploadAvatarInput     false  "example body"   collectionFormat(multi)
+// @Success      200  {object}  user.User
+// @Failure      400  {object}  helper.HTTPError
+// @Failure      404  {object}  helper.HTTPError
+// @Failure      500  {object}  helper.HTTPError
+// @Router       /upload_avatar [post]
+func (h *userHandler) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		formatter := user.FormatUploadAvatar(false)
+		response := helper.APIResponse("Failed upload avatar", http.StatusBadRequest, "error", formatter)
+		c.JSON(http.StatusBadRequest, response)
+	}
+	//make path of file
+	path := "images/" + file.Filename
+	//save file ke local
+	err = c.SaveUploadedFile(file, path)
+
+	if err != nil {
+		formatter := user.FormatUploadAvatar(false)
+		response := helper.APIResponse("Failed upload avatar", http.StatusBadRequest, "error", formatter)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	userID := 1
+
+	_, err = h.userService.UploadAvatar(userID, path)
+
+	if err != nil {
+		formatter := user.FormatUploadAvatar(false)
+		response := helper.APIResponse("Failed upload avatar", http.StatusBadRequest, "error", formatter)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUploadAvatar(true)
+	response := helper.APIResponse("Successfully upload avatar", http.StatusOK, "error", formatter)
+	c.JSON(http.StatusOK, response)
+
+}

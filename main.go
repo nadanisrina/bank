@@ -57,6 +57,7 @@ func main() {
 		v1.POST("/user", userHandler.RegisterUser)
 		v1.POST("/login", userHandler.Login)
 		v1.POST("/email_checkers", userHandler.CheckEmail)
+		v1.POST("/upload_avatar", userHandler.UploadAvatar)
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run(":8080")

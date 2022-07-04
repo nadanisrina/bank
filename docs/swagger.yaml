@@ -56,6 +56,8 @@ definitions:
     type: object
   user.User:
     properties:
+      avatarFileName:
+        type: string
       createdAt:
         type: string
       email:
@@ -147,6 +149,37 @@ paths:
       summary: Login User
       tags:
       - users
+  /upload_avatar:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - in: formData
+        name: avatar
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.HTTPError'
+      summary: Upload Avatar of user
+      tags:
+      - email
   /users:
     post:
       consumes:

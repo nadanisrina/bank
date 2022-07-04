@@ -8,6 +8,7 @@ CREATE TABLE "users" (
   "username" varchar NOT NULL,
   "email" varchar NOT NULL,
   "password_hash" varchar NOT NULL,
+  "avatar_file_name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 

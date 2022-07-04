@@ -17,7 +17,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	// Add name field
-	errMigrate := db.Migrator().AddColumn(&user.User{}, "token")
+	// errMigrate := db.Migrator().AddColumn(&user.User{}, "token")
+
+	// Add name field
+	errMigrate := db.Migrator().AddColumn(&user.User{}, "AvatarFileName")
 
 	if errMigrate != nil {
 		log.Panic(errMigrate)
