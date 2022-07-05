@@ -162,7 +162,9 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 	}
 	//make path of file
-	userID := 1
+	currenUserLogin := c.MustGet("currenUserLogin")
+	mapToUser := currenUserLogin.(user.User)
+	userID := mapToUser.ID
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
 	// path := "images/" + file.Filename
 	//save file ke local

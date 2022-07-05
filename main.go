@@ -3,14 +3,18 @@ package main
 import (
 	"bank/auth"
 	"bank/handler"
+	"bank/helper"
 	"bank/user"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"log"
 
 	"bank/docs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/driver/postgres"
@@ -74,9 +78,48 @@ func main() {
 		v1.POST("/user", userHandler.RegisterUser)
 		v1.POST("/login", userHandler.Login)
 		v1.POST("/email_checkers", userHandler.CheckEmail)
-		v1.POST("/upload_avatar", userHandler.UploadAvatar)
+		v1.POST("/upload_avatar", authMiddleware(authService, userService), userHandler.UploadAvatar)
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run(":8080")
 
+}
+
+func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if !strings.Contains(authHeader, "Bearer") {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		tokenString := ""
+		arrayToken := strings.Split(authHeader, " ")
+		if len(arrayToken) == 2 {
+			tokenString = arrayToken[1]
+		}
+		token, err := authService.ValidateToken(tokenString)
+		if err != nil {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		claim, ok := token.Claims.(jwt.MapClaims)
+		// check secret key
+		if !ok || !token.Valid {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		userID := int(claim["user_id"].(float64))
+		user, err := userService.GetUserById(userID)
+		if err != nil {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		c.Set("currenUserLogin", user)
+
+	}
 }
