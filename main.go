@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bank/auth"
 	"bank/handler"
 	"bank/user"
+	"fmt"
+
 	"log"
 
 	"bank/docs"
@@ -47,7 +50,11 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	userHandler := handler.NewUserHandler(userService)
+	authService := auth.NewService()
+
+	userHandler := handler.NewUserHandler(userService, authService)
+
+	fmt.Println(authService.GenerateToken(1))
 
 	router := gin.Default()
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bank/auth"
 	"bank/helper"
 	"bank/user"
 	"fmt"
@@ -11,10 +12,11 @@ import (
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 // CreateUser godoc
@@ -49,8 +51,14 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		helper.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-	// token,err := h.jwtService.GenerateToken()
-	formatted := user.FormatUser(newUser, "token")
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.APIResponse("cannot create token", http.StatusUnprocessableEntity, "error", err.Error())
+		c.JSON(http.StatusUnprocessableEntity, response)
+		helper.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+	formatted := user.FormatUser(newUser, token)
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatted)
 	c.JSON(http.StatusOK, response)
 
@@ -78,7 +86,14 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 	loginUser, err := h.userService.Login(input)
-	formatted := user.FormatUser(loginUser, "token")
+	token, err := h.authService.GenerateToken(loginUser.ID)
+	if err != nil {
+		response := helper.APIResponse("cannot create token", http.StatusBadRequest, "error", err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		helper.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+	formatted := user.FormatUser(loginUser, token)
 	response := helper.APIResponse("Login Success", http.StatusOK, "success", formatted)
 	c.JSON(http.StatusOK, response)
 

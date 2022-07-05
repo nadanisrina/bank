@@ -10,7 +10,10 @@ require (
 	gorm.io/gorm v1.23.6
 )
 
-require github.com/gofrs/uuid v4.2.0+incompatible // indirect
+require (
+	github.com/gofrs/uuid v4.2.0+incompatible // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
