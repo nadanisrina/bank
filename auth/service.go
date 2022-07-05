@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"os"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -14,7 +15,8 @@ type Service interface {
 type jwtService struct {
 }
 
-var SECRET_KEY = []byte("s3cr3t_k3y")
+var envSecretKey = os.Getenv("SECRET_KEY")
+var SECRET_KEY = []byte(envSecretKey)
 
 func NewService() *jwtService {
 	return &jwtService{}

@@ -13,6 +13,7 @@ require (
 require (
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
+	github.com/joho/godotenv v1.4.0 // indirect
 )
 
 require (
